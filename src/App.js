@@ -1,8 +1,8 @@
 import React from "react";
-import Calculator from "./components/Calculator";
+import EmployeeTable from "./components/EmployeeTable";
 
 function App() {
-  return <Calculator />;
+  return <EmployeeTable />;
 }
 
 export default App;
