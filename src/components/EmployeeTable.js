@@ -1,22 +1,25 @@
 import React, { Component } from "react";
-import SearchForm from "./SearchForm";
-import ResultList from "./ResultList";
 import API from "../utils/API";
+import Card from "./Card";
+import Search from "./Search";
+import EmployeeDetails from "./EmployeeDetails"
+
 
 class RandomEmployeesTable extends Component {
   state = {
     search: "",
-    results: []
+    results: [],
+    filteredResults: []
   };
 
   // When this component mounts, search the Giphy API for pictures of kittens
   componentDidMount() {
-    this.searchGiphy("kittens");
+    this.searchEmployees();
   }
 
-  searchGiphy = query => {
-    API.search(query)
-      .then(res => this.setState({ results: res.data.data }))
+  searchEmployees = () => {
+    API.search()
+      .then(res => this.setState({ results: res.data.results, filteredResults : res.data.results  }))
       .catch(err => console.log(err));
   };
 
@@ -29,23 +32,61 @@ class RandomEmployeesTable extends Component {
   };
 
   // When the form is submitted, search the Giphy API for `this.state.search`
-  handleFormSubmit = event => {
+  handleFormSearch = event => {
     event.preventDefault();
-    this.searchGiphy(this.state.search);
+    const value = event.target.value;
+    const filterEmployee = this.state.results.filter(
+        employee => {
+            let userValue = Object.values(employee).join("").toLowerCase();
+            return userValue.indexOf(value.toLowerCase()) !== -1;
+        }
+    );
+    this.setState({filteredResults : filterEmployee})
   };
+
+  sortAge = () => {
+    
+  }
 
   render() {
     return (
-      <div>
-        <SearchForm
-          search={this.state.search}
-          handleFormSubmit={this.handleFormSubmit}
-          handleInputChange={this.handleInputChange}
+    //   <Container>
+    //     <Row>
+    //       <Col size="md-8">
+    <div>
+        <Search
+        handleFormSearch = {this.handleFormSearch}
         />
-        <ResultList results={this.state.results} />
-      </div>
-    );
-  }
+        
+            <Card
+              heading={ "List of Employees" }
+            >
+
+              {this.state.results !== undefined ? (
+                  this.state.filteredResults.map((user)=>{
+                    return (
+                    <EmployeeDetails
+                        image={user.picture.medium}
+                        firstName={user.name.first}
+                        lastName={user.name.last}
+                        Age={user.dob.age}
+                        Email={user.email}
+                    />
+                )
+                })
+              ) 
+              : (
+                <h3>No Results to Display</h3>
+              )}
+            </Card>
+            </div>
+    //       </Col>
+    //     </Row>
+    //   </Container>
+    // );
+//   }
+    )
+}
 }
 
 export default RandomEmployeesTable ;
