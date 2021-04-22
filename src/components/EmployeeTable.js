@@ -3,6 +3,7 @@ import API from "../utils/API";
 import Card from "./Card";
 import Search from "./Search";
 import EmployeeDetails from "./EmployeeDetails"
+import Age from "./Buttons"
 
 
 class RandomEmployeesTable extends Component {
@@ -12,26 +13,20 @@ class RandomEmployeesTable extends Component {
     filteredResults: []
   };
 
-  // When this component mounts, search the Giphy API for pictures of kittens
+  
   componentDidMount() {
     this.searchEmployees();
+    
   }
 
   searchEmployees = () => {
     API.search()
+    .then(data => {console.log(data); return data})
       .then(res => this.setState({ results: res.data.results, filteredResults : res.data.results  }))
       .catch(err => console.log(err));
+      
   };
 
-  handleInputChange = event => {
-    const name = event.target.name;
-    const value = event.target.value;
-    this.setState({
-      [name]: value
-    });
-  };
-
-  // When the form is submitted, search the Giphy API for `this.state.search`
   handleFormSearch = event => {
     event.preventDefault();
     const value = event.target.value;
@@ -42,22 +37,33 @@ class RandomEmployeesTable extends Component {
         }
     );
     this.setState({filteredResults : filterEmployee})
+    
   };
 
   sortAge = () => {
     
   }
+  sortAge = () => {
+      const filteredAge = this.state.filteredResults.sort(function(a, b) {
+        return new Date(b.dob.age) - new Date(a.dob.age);
+      });
+  
+      this.setState({ filteredResults: filteredAge }, () => console.log(this.state.filteredResults));
+    console.log(filteredAge)
+    };
 
   render() {
+    
     return (
-    //   <Container>
-    //     <Row>
-    //       <Col size="md-8">
+    
     <div>
+        
         <Search
         handleFormSearch = {this.handleFormSearch}
         />
-        
+        <Age
+        sortAge = {this.sortAge}
+        />
             <Card
               heading={ "List of Employees" }
             >
@@ -71,6 +77,7 @@ class RandomEmployeesTable extends Component {
                         lastName={user.name.last}
                         Age={user.dob.age}
                         Email={user.email}
+                        
                     />
                 )
                 })
@@ -78,13 +85,10 @@ class RandomEmployeesTable extends Component {
               : (
                 <h3>No Results to Display</h3>
               )}
+              
             </Card>
             </div>
-    //       </Col>
-    //     </Row>
-    //   </Container>
-    // );
-//   }
+ 
     )
 }
 }
