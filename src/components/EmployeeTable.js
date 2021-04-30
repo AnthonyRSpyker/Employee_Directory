@@ -40,12 +40,13 @@ class RandomEmployeesTable extends Component {
     
   };
 
-  sortAge = () => {
-    
-  }
-  sortAge = () => {
+ 
+  sortAge = (event) => {
+    event.preventDefault()
       const filteredAge = this.state.filteredResults.sort(function(a, b) {
+        console.log(a,b)
         return new Date(b.dob.age) - new Date(a.dob.age);
+        
       });
   
       this.setState({ filteredResults: filteredAge }, () => console.log(this.state.filteredResults));
